@@ -28,11 +28,11 @@ class TSNamespace
   end
 
   def run(code)
-    runtime = TSRuntime.new(self, @expr_env, @stat_env)
+    @runtime = TSRuntime.new(self, @expr_env, @stat_env)
     if code.is_a?(Proc)
-      runtime.instance_eval(&code)
+      @runtime.instance_eval(&code)
     else
-      runtime.instance_eval(code)
+      @runtime.instance_eval(code)
     end
   end
 
@@ -40,10 +40,16 @@ class TSNamespace
     @stat_list.push(stat)
   end
 
-  def register(nm, val)
-    # raise VarExistsError.new("Variable `#{nm}' exists at #{self}") if _has_var?(nm)
+  def refer(nm, val)
     raise VarExistsError.new("Variable `#{nm}' trying to convert #{@variables[nm].type} => #{val.type} at #{self}") if @variables[nm] && @variables[nm].type != val.type
-    @variables[nm] = TSVar.new(nm, val)
+    if /^[A-Z]/ === nm.to_s
+      @runtime.const_set nm, val
+    end
+    @variables[nm] = val
+  end
+
+  def register(nm, val)
+    refer(nm, TSVar.new(nm, val))
   end
 
   def _get_var(nm)
@@ -161,6 +167,10 @@ class TSExprEnv < TSEnv
   def initialize(namespace)
     @namespace = namespace
   end
+
+  def ref(name, type)
+    TSVar.new(name, TSValue.new(type, name.to_s))
+  end
 end
 
 class TSStatEnv < TSEnv
@@ -175,6 +185,13 @@ class TSStatEnv < TSEnv
   def _(*exprs)
     exprs.each do |e|
       statement e.java
+    end
+  end
+
+  def use(vars)
+    vars.each do |nm, val|
+      raise TypeError.new("Var `#{nm}' is not a TSValue: #{val}'") unless val.is_a?(TSValue)
+      @namespace.refer(nm, val)
     end
   end
 
