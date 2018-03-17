@@ -81,12 +81,8 @@ class TSRuntime
   end
 
   def method_missing(nm, *args, &block)
-    if args.empty?
-      if @namespace._has_var?(nm)
-        return @namespace._get_var(nm)
-      else
-        super(nm, *args)
-      end
+    if args.empty? && @namespace._has_var?(nm)
+      return @namespace._get_var(nm)
     else
       begin
         @expr_env.send(nm, *args, &block)
@@ -95,11 +91,7 @@ class TSRuntime
           @stat_env.send(nm, *args, &block)
         rescue NoExprError => err
           super(nm, *args)
-        rescue StandardError => err
-          raise err
         end
-      rescue StandardError => err
-        raise err
       end
     end
 

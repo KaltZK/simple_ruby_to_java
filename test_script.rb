@@ -29,6 +29,12 @@ class TSValue
   end
 end
 
-ns = TSNamespace.new
+class TestExprEnv < TSExprEnv
+end
+
+class TestStatEnv < TSStatEnv
+end
+
+ns = TSNamespace.new(TestExprEnv, TestStatEnv)
 ns.run(File.read ARGV[0])
 puts ns.render

@@ -15,6 +15,6 @@ if_true a == b do
   let :z => x.whatTheFuck? # get attribute
 end
 
-let :path => a.json?._.a.b.c.d[3].a
+let :value => a.json?._.a.b.c.d[3].a
 
 let :d => 4
