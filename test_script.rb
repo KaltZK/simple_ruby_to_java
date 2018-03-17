@@ -30,5 +30,5 @@ class TSValue
 end
 
 ns = TSNamespace.new
-ns.run(File.read 'foo.rb')
+ns.run(File.read ARGV[0])
 puts ns.render
