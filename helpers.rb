@@ -207,6 +207,10 @@ class TSStatEnv < TSEnv
     end
   end
 
+  def comment(str)
+    statement "// #{str}"
+  end
+
   def println(*vals)
     vals.each do |v|
       statement "System.out.println( #{v.java} );"

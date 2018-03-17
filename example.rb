@@ -4,12 +4,15 @@ let :b => 2
 println a + b
 let :d => a + b
 
+comment "Java comment."
+
 println d
 println utils
 
 if_true a == b do
   let :x => 1
-  let :x => x + x.doSomeShit!
+  let :x => x + x.doSomeShit!(233) # call method
+  let :z => x.whatTheFuck? # get attribute
 end
 
 let :path => a.json?._.a.b.c.d[3].a
