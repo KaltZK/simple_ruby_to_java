@@ -1,6 +1,6 @@
-use :utils => ref(:Utils, :T)
+use :utils => ref(:Utils, :WTFClass)
 let :a => 1
-let :b => 2
+let :b => 2, :c => 3
 println a + b
 let :d => a + b
 
