@@ -290,3 +290,17 @@ class FalseClass
     TSValue.new(:Boolean, "false", self)
   end
 end
+
+class Hash
+  def tsvalue
+    map do |k, v|
+      [k, v.tsvalue]
+    end.to_h
+  end
+end
+
+class Array
+  def tsvalue
+    map(&:tsvalue)
+  end
+end
