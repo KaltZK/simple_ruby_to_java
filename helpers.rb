@@ -195,6 +195,9 @@ class TSExprEnv < TSInnerObject
     TSVar.new(name, TSValue.new(type, name.to_s))
   end
 
+  def new_object(type, *args)
+    TSValue.new(type, "new #{type}(#{args.map(&:java).join(", ")})")
+  end
   
 end
 
@@ -316,5 +319,8 @@ end
 class Symbol
   def tsvalue
     self
+  end
+  def t(*args)
+    :"#{self}<#{args.map(&:to_s).join(", ")}>"
   end
 end

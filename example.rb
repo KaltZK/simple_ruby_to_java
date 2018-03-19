@@ -16,5 +16,5 @@ map_merge header, {'a' => 1, 'b' => 'b', 'c' => nil}
 
 let :response => sendRequest!(header, query, response?).as(:ResponseMap)
 let :imageId => response.json?._.imageList[0].id.as(:Integer)
-
+let :list => new_object(:Array.t(:Map.t(:Integer, :String)))
 println imageId
