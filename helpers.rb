@@ -304,3 +304,9 @@ class Array
     map(&:tsvalue)
   end
 end
+
+class Symbol
+  def tsvalue
+    self
+  end
+end
