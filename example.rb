@@ -13,17 +13,8 @@ let :header => json_object
 let :body   => json_object
 let :query  => json_object
 load_json header, 'a' => 1, 'b' => 'b', 'c' => nil
-sendRequest(header, query, response?)
 
-println d
-println utils
+let :response => sendRequest!(header, query, response?).as(:ResponseMap)
+let :imageId => response.json?._.imageList[0].id.as(:Integer)
 
-if_true a == b do
-  let :x => 1
-  let :x => x + x.doSomeShit!(233) # call method
-  let :z => x.whatTheFuck? # get attribute
-end
-
-let :value => a.json?._.a.b.c.d[3].a
-
-let :d => 4
+println imageId

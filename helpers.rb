@@ -116,6 +116,14 @@ class TSValue < TSEnv
     self
   end
 
+  def as(type = nil)
+    if type.nil?
+      method_missing(:as)
+    else
+      TSValue.new(type, java, @val)
+    end
+   end
+
   def method_missing(nm, *args)
     if /^(\w+)!$/ === nm.to_s
       TSValue.new(@type, "#{java}.#{$1}(#{args.map{|o| o.tsvalue.java}.join(", ")})")
