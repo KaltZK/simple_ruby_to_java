@@ -138,7 +138,7 @@ class TSValue < TSEnv
     %w{+ - * / ^ % & | && || < > ? :}.map(&:to_sym).each do |nm|
       define_singleton_method(nm) do |other|
         other = other.tsvalue
-        TSValue.new(@type, "#{java} #{nm} #{other.java}")
+        TSValue.new(@type, "(#{java} #{nm} #{other.java})")
       end
     end
     %w{! ~ -}.each do |nm|
