@@ -7,6 +7,12 @@ let :d => a + b
 comment "Java comment."
 
 
+helper :concat, [:String, :String], :String do |s1, s2|
+    ret s1 + s2
+end
+
+let :ssr => concat("1", "2")
+
 let :a => 1
 let :h => -a
 let :header => json_object

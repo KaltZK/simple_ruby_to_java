@@ -27,10 +27,10 @@ class TSNamespace
     )
   end
 
-  def run(code)
+  def run(code, *args)
     @runtime = TSRuntime.new(self, @expr_env, @stat_env)
     if code.is_a?(Proc)
-      @runtime.instance_eval(&code)
+      @runtime.instance_exec(*args, &code)
     else
       @runtime.instance_eval(code)
     end
@@ -208,6 +208,35 @@ class TSStatEnv < TSInnerObject
   
   def statement(stat)
     @namespace.add_statement(stat)
+  end
+
+  def helper(name, args_type, ret_type, &pc)
+    class_name = name.to_s.split(?_).map(&:capitalize).join + "Helper"
+    statement "class #{class_name} {"
+    sub = @namespace.create_subnamespace
+    arg_pairs = pc.parameters.map(&:last).zip(args_type)
+    args = arg_pairs.map do |nm, tp|
+      TSVar.new(nm, TSValue.new(tp, nm.to_s))
+    end
+    arg_table = arg_pairs.map do |nm, tp|
+      "#{tp} #{nm}"
+    end
+    inner = sub.create_subnamespace
+    sub.add_statement "#{ret_type} run(#{arg_table.join(", ")}) {"
+    inner.run(pc, *args)
+    sub.add_statement(inner)
+    sub.add_statement "}"
+    
+    statement sub
+    statement "}"
+    define_singleton_method(name) do |*args|
+      args = args.map(&:tsvalue)
+      TSValue.new(ret_type, "new #{class_name}().run(#{args.map(&:java).join(", ")})")
+    end
+  end
+
+  def ret(val)
+    statement "return #{val.java} ;"
   end
   
   def run(*exprs)
