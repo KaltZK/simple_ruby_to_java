@@ -43,6 +43,8 @@ class TestStatEnv < TSStatEnv
   end
 end
 
-ns = TSNamespace.new(TestExprEnv, TestStatEnv)
-ns.run(File.read ARGV[0])
-puts ns.render
+if __FILE__ == $0
+  ns = TSNamespace.new(TestExprEnv, TestStatEnv)
+  ns.run(File.read ARGV[0])
+  puts ns.render
+end
