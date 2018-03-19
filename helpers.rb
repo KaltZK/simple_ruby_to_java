@@ -210,7 +210,8 @@ class TSStatEnv < TSInnerObject
     @namespace.add_statement(stat)
   end
 
-  def helper(name, args_type, ret_type, &pc)
+  def helper(name, form, &pc)
+    args_type, ret_type = form.first
     class_name = name.to_s.split(?_).map(&:capitalize).join + "Helper"
     statement "class #{class_name} {"
     sub = @namespace.create_subnamespace
