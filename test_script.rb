@@ -36,7 +36,7 @@ class TestExprEnv < TSExprEnv
 end
 
 class TestStatEnv < TSStatEnv
-  def load_json(var, data)
+  def map_merge(var, data)
     data.each do |k, v|
       statement "#{var.java}.put(#{k.tsvalue.java}, #{v.tsvalue.java});"
     end

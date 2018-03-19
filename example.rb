@@ -12,7 +12,7 @@ let :h => -a
 let :header => json_object
 let :body   => json_object
 let :query  => json_object
-load_json header, 'a' => 1, 'b' => 'b', 'c' => nil
+map_merge header, {'a' => 1, 'b' => 'b', 'c' => nil}
 
 let :response => sendRequest!(header, query, response?).as(:ResponseMap)
 let :imageId => response.json?._.imageList[0].id.as(:Integer)
