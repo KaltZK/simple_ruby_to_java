@@ -81,6 +81,7 @@ class TSRuntime
   end
 
   def method_missing(nm, *args, &block)
+    args.map!(&:tsvalue)
     if args.empty? && @namespace._has_var?(nm)
       return @namespace._get_var(nm)
     else

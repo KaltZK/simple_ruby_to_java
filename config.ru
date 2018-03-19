@@ -12,7 +12,7 @@ class App < Sinatra::Base
             ns = TSNamespace.new(TestExprEnv, TestStatEnv)
             ns.run(payload)
             ns.result
-        rescue StandardError => err 
+        rescue Exception => err 
             warn err
             warn $@
             [$!, $@].flatten.join("\n")
