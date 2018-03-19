@@ -6,6 +6,15 @@ let :d => a + b
 
 comment "Java comment."
 
+
+let :a => 1
+let :h => -a
+let :header => json_object
+let :body   => json_object
+let :query  => json_object
+load_json header, 'a' => 1, 'b' => 'b', 'c' => nil
+sendRequest(header, query, response?)
+
 println d
 println utils
 

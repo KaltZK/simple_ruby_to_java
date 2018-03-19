@@ -4,7 +4,7 @@ class TSJsonPathAssest < TSValue
   def initialize(parent, path)
     @parent = parent
     @path = path
-    super(:String, %Q{#{@parent.java}.getValue( "#{['$'].concat(path).join('.')}" )})
+    super(:Object, %Q{JsonPathUtil.getJsonPathValue( #{@parent.java},  "#{['$'].concat(path).join('.')}" )})
   end
   def [](idx)
     np = @path.clone
@@ -30,9 +30,17 @@ class TSValue
 end
 
 class TestExprEnv < TSExprEnv
+  def json_object()
+    TSValue.new(:JSONObject, "new JSONObject()")
+  end
 end
 
 class TestStatEnv < TSStatEnv
+  def load_json(var, data)
+    data.each do |k, v|
+      statement "#{var.java}.put(#{k.tsvalue.java}, #{v.tsvalue.java});"
+    end
+  end
 end
 
 ns = TSNamespace.new(TestExprEnv, TestStatEnv)

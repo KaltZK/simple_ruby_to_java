@@ -132,7 +132,7 @@ class TSValue < TSEnv
         TSValue.new(@type, "#{java} #{nm} #{other.java}")
       end
     end
-    %w{! ~}.map(&:to_sym).each do |nm|
+    %w{! ~ -}.each do |nm|
       define_singleton_method(:"#{nm}@") do
         other = other.tsvalue
         TSValue.new(@type, "#{nm}#{java}")
@@ -155,17 +155,41 @@ class TSVar < TSValue
   end
 end
 
-class TSExprEnv < TSEnv
+class TSInnerObject < TSEnv
+  def method_missing(nm, *args)
+    case nm.to_s
+    when /^(\w+)!$/
+      s = "#{$1}( #{args.map(&:java).join(', ')} )"
+      TSValue.new(:Object, s)
+    when /^(\w+)\?$/
+      if args.empty?
+        TSValue.new(:Object, $1)
+      else
+        super(nm, *args)
+      end
+    else
+      super(nm, *args)
+    end
+  end
+end
+
+class TSExprEnv < TSInnerObject
   def initialize(namespace)
     @namespace = namespace
+  end
+
+  def this()
+    TSVar.new("this", TSValue.new(:Object, "this"))
   end
 
   def ref(name, type)
     TSVar.new(name, TSValue.new(type, name.to_s))
   end
+
+  
 end
 
-class TSStatEnv < TSEnv
+class TSStatEnv < TSInnerObject
   def initialize(namespace)
     @namespace = namespace
   end
@@ -174,11 +198,12 @@ class TSStatEnv < TSEnv
     @namespace.add_statement(stat)
   end
   
-  def _(*exprs)
+  def run(*exprs)
     exprs.each do |e|
       statement e.java
     end
   end
+  alias _ run
 
   def use(vars)
     vars.each do |nm, val|
@@ -216,6 +241,11 @@ class TSStatEnv < TSEnv
     statement sub
     statement "}"
   end
+
+  def method_missing(nm, *args)
+    statement "#{nm.to_s}( #{args.map(&:java).join(', ')} );"
+  end
+
 end
 
 class Object
@@ -239,5 +269,23 @@ end
 class Float
   def tsvalue
     TSValue.new(:Double, inspect, self)
+  end
+end
+
+class NilClass
+  def tsvalue
+    TSValue.new(:Object, "null", self)
+  end
+end
+
+class TrueClass
+  def tsvalue
+    TSValue.new(:Boolean, "true", self)
+  end
+end
+
+class FalseClass
+  def tsvalue
+    TSValue.new(:Boolean, "false", self)
   end
 end
