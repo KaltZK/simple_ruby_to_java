@@ -226,7 +226,7 @@ class TSStatEnv < TSInnerObject
   end
 
   def comment(str)
-    statement "// #{str}"
+    statement "// #{str.val}"
   end
 
   def println(*vals)
@@ -243,9 +243,9 @@ class TSStatEnv < TSInnerObject
     statement "}"
   end
 
-  def method_missing(nm, *args)
-    statement "#{nm.to_s}( #{args.map(&:java).join(', ')} );"
-  end
+  # def method_missing(nm, *args)
+  #   statement "#{nm.to_s}( #{args.map(&:java).join(', ')} );"
+  # end
 
 end
 
